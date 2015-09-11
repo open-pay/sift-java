@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.github.mcac0006</groupId>
-  <artifactId>sift-java</artifactId>
-  <version>0.0.1</version>
+  <groupId>mx.openpay</groupId>
+  <artifactId>openpay-sift-java</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
-  <name>Sift Science Java library</name>
-  <description>Java library which help integrate your Java application to Sift Science quicker and easier.</description>
+  <name>Sift Science Java library for Openpay</name>
+  <description>Java library which help integrate your Java application to Sift Science quicker and easier. Forked from Matthew Cachia's sift-java project.</description>
   <url>https://github.com/mcac0006/sift-java</url>
   
   <developers>
@@ -18,13 +18,15 @@
             <url>http://www.cachia.info</url>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+			<name>Openpay Developers</name>
+		</developer>
   </developers>
   
-  
    <scm>
-       <connection>scm:git:git://github.com/mcac0006/sift-java.git</connection>
-       <developerConnection>scm:git:git@github.com:mcac0006/sift-java.git</developerConnection>
-       <url>http://github.com/mcac0006/sift-java/tree/master</url>
+       <connection>scm:git:git://github.com/open-pay/sift-java.git</connection>
+       <developerConnection>scm:git:git@github.com:open-pay/sift-java.git</developerConnection>
+       <url>http://github.com/open-pay/sift-java/tree/master</url>
    </scm>
   
   <dependencies>
@@ -92,8 +94,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			
@@ -135,5 +137,20 @@
           <distribution>repo</distribution>
       </license>
   </licenses>
+  
+	<distributionManagement>
+	       <!-- Publish the versioned releases here -->
+		<repository>
+			<id>nexus-facelend</id>
+			<name>RepositoryProxy</name>
+			<url>http://nexus.facelend.com:8081/nexus/content/repositories/releases</url>
+		</repository>
+	       <!-- Publish the versioned releases here -->
+		<snapshotRepository>
+			<id>nexus-facelend</id>
+			<name>RepositoryProxy</name>
+			<url>http://nexus.facelend.com:8081/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
   
 </project>
