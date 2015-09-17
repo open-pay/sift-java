@@ -19,6 +19,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import com.mcac0006.siftscience.event.domain.Event;
 import com.mcac0006.siftscience.exception.SiftScienceException;
 import com.mcac0006.siftscience.label.domain.Label;
+import com.mcac0006.siftscience.partner.domain.SiftMerchant;
+import com.mcac0006.siftscience.result.domain.SiftMerchantResponse;
 import com.mcac0006.siftscience.result.domain.SiftScienceResponse;
 import com.mcac0006.siftscience.score.domain.SiftScienceScore;
 
@@ -88,7 +90,33 @@ public class SiftScienceHelper {
 			throw new SiftScienceException("Error generating JSON content to send label.", e);
 		}
 	}
-	
+
+	/**
+	 * Sends a create account request ($accounts) to Sift Science.
+	 * 
+	 * @param partnerId - the partner in question
+	 * @param apikey - the api key to denote which Sift Science account to use.
+	 * @param merchantAccount - the entity of Sift Science merchant account to create.
+
+	 * @return the Sift Science response with the account created.
+	 */
+	public static SiftMerchantResponse createAccount(final String partnerId, final String apikey, final SiftMerchant merchantAccount) {
+		
+		try {
+			
+			final Client client = ClientBuilder.newClient();
+			final WebTarget target = client.target("https://api3.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
+			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey);
+			final Response post = request.post(Entity.entity(serialize(merchantAccount), MediaType.APPLICATION_JSON_TYPE));
+			
+			final SiftMerchantResponse siftMerchantResult = deserializeMerchantResponse(post.readEntity(String.class));
+			return siftMerchantResult;
+			
+		} catch (IOException e) {
+			throw new SiftScienceException("Error generating JSON content to send label.", e);
+		}
+	}
+
 	/**
 	 * Retrieve a risk assessment of a particular user. This is particularly useful to consult with Sift Science 
 	 * before you proceed with any (user-invoked or system-invoked) operations (such as a purchase) on that user.
@@ -136,7 +164,11 @@ public class SiftScienceHelper {
 	public static String serialize(final Label label) throws IOException {
 		return mapper.writeValueAsString(label);
 	}
-	
+
+    private static String serialize(final SiftMerchant merchantAccount) throws IOException {
+        return mapper.writeValueAsString(merchantAccount);
+    }
+
 	/**
 	 * <p>Deserializes a response after sending an {@link Event} or a {@link Label}.
 	 * 
@@ -161,4 +193,16 @@ public class SiftScienceHelper {
 	public static SiftScienceScore deserializeScore(final String $scoreResponse) throws IOException {
 		return mapper.readValue($scoreResponse, SiftScienceScore.class);
 	}
+	
+	/**
+	 * <p>Deserializes the account returned by Sift Science.</p>
+	 * 
+	 * @param $$accountResponse the JSON envelope withholding Sift Science's response.
+	 * @return the response in POJO.
+	 * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during deserialization of the account returned.
+	 */
+	private static SiftMerchantResponse deserializeMerchantResponse(final String $accountResponse) throws IOException {
+    	return mapper.readValue($accountResponse, SiftMerchantResponse.class);
+    }
+
 }
