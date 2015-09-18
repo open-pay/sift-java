@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -38,6 +39,11 @@ import com.mcac0006.siftscience.score.domain.SiftScienceScore;
 public class SiftScienceHelper {
 	
 	private static ObjectMapper mapper;
+	private static String PATH_EVENTS_API = "https://api.siftscience.com/v203/events";
+	private static String PATH_SCORE_API = "https://api.siftscience.com/v203/score/";
+	private static String PATH_LABELS_API = "https://api.siftscience.com/v203/users/";
+	private static String PATH_PARTNERS_API = "https://api3.siftscience.com/v3/partners/";	
+	private static String PATH_DEVICE_FINGERPRINTING_API = "";
 	
 	static {
 		mapper = new ObjectMapper();
@@ -57,7 +63,7 @@ public class SiftScienceHelper {
 		try {
 			
 			final Client client = ClientBuilder.newClient();
-			final WebTarget target = client.target("https://api.siftscience.com/v203/events");
+			final WebTarget target = client.target(PATH_EVENTS_API);
 			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
 			final Response post = request.post(Entity.entity(serialize(event), MediaType.APPLICATION_JSON_TYPE));
 			
@@ -81,7 +87,7 @@ public class SiftScienceHelper {
 		try {
 			
 			final Client client = ClientBuilder.newClient();
-			final WebTarget target = client.target("https://api.siftscience.com/v203/users/").path(userId).path("labels");
+			final WebTarget target = client.target(PATH_LABELS_API).path(userId).path("labels");
 			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
 			final Response post = request.post(Entity.entity(serialize(label), MediaType.APPLICATION_JSON_TYPE));
 			
@@ -106,9 +112,9 @@ public class SiftScienceHelper {
 		
 		try {
 			
-			final Client client = ClientBuilder.newClient();
-			final WebTarget target = client.target("https://partner.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
-			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey );
+			final Client client = ClientBuilder.newClient().register(new Authenticator(apikey,""));
+			final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
+			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
 			final Response post = request.post(Entity.entity(serialize(merchantAccount), MediaType.APPLICATION_JSON_TYPE));
 			
 			final SiftMerchantResponse siftMerchantResult = deserializeMerchantResponse(post.readEntity(String.class));
@@ -121,10 +127,9 @@ public class SiftScienceHelper {
 
 	public static String listAccounts(final String partnerId, final String apikey) {
 		
-			final Client client = ClientBuilder.newClient();
-			//final WebTarget target = client.target("https://api3.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
-			final WebTarget target = client.target("https://partner.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
-			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey );
+			final Client client = ClientBuilder.newClient().register(new Authenticator(apikey,""));
+			final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
+			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
 			final Response get = request.get();
 			
 			return get.readEntity(String.class);
@@ -148,7 +153,7 @@ public class SiftScienceHelper {
 		try {
 			
 			final Client client = ClientBuilder.newClient();
-			final WebTarget target = client.target("https://api.siftscience.com/v203/score/").path(userId).queryParam("api_key", api_key);
+			final WebTarget target = client.target(PATH_SCORE_API).path(userId).queryParam("api_key", api_key);
 			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
 			final Response get = request.get();
 			
