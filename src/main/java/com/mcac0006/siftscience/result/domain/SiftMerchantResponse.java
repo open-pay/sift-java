@@ -11,6 +11,8 @@ package com.mcac0006.siftscience.result.domain;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -19,12 +21,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.Setter;
 import lombok.Getter;
+import lombok.ToString;
 
 
 /**
  * @author Oswaldo Martinez
  *
  */
+@ToString
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,6 +36,7 @@ import lombok.Getter;
 @JsonNaming(LowerCaseWithUnderscoresStrategy.class)
 public class SiftMerchantResponse {
     
+	@JsonProperty(value="account_id")
     private String accountId;
     
     private Access production;
@@ -40,18 +45,22 @@ public class SiftMerchantResponse {
 
 }
 
+@ToString
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE)
 @JsonNaming(LowerCaseWithUnderscoresStrategy.class)
 class Access {
+	@JsonProperty(value="api_keys")
     private List<KeyRecord> apiKeys;
 
+	@JsonProperty(value="beacon_keys")
     private List<KeyRecord> beaconKeys;
 
 }
 
+@ToString
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)

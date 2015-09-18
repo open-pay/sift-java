@@ -13,6 +13,8 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -105,16 +107,28 @@ public class SiftScienceHelper {
 		try {
 			
 			final Client client = ClientBuilder.newClient();
-			final WebTarget target = client.target("https://api3.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
-			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey);
+			final WebTarget target = client.target("https://partner.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
+			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey );
 			final Response post = request.post(Entity.entity(serialize(merchantAccount), MediaType.APPLICATION_JSON_TYPE));
 			
 			final SiftMerchantResponse siftMerchantResult = deserializeMerchantResponse(post.readEntity(String.class));
 			return siftMerchantResult;
 			
 		} catch (IOException e) {
-			throw new SiftScienceException("Error generating JSON content to send label.", e);
+			throw new SiftScienceException("Error generating JSON content to createAccount " + e.getMessage(), e);
 		}
+	}
+
+	public static String listAccounts(final String partnerId, final String apikey) {
+		
+			final Client client = ClientBuilder.newClient();
+			//final WebTarget target = client.target("https://api3.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
+			final WebTarget target = client.target("https://partner.siftscience.com/v3/partners/").path(partnerId).path("/accounts");
+			final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE).header("Authorization", "Basic " + apikey );
+			final Response get = request.get();
+			
+			return get.readEntity(String.class);
+			
 	}
 
 	/**
@@ -166,6 +180,7 @@ public class SiftScienceHelper {
 	}
 
     private static String serialize(final SiftMerchant merchantAccount) throws IOException {
+    	System.out.println("serialization:"+mapper.writeValueAsString(merchantAccount)); 
         return mapper.writeValueAsString(merchantAccount);
     }
 
@@ -201,8 +216,14 @@ public class SiftScienceHelper {
 	 * @return the response in POJO.
 	 * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during deserialization of the account returned.
 	 */
-	private static SiftMerchantResponse deserializeMerchantResponse(final String $accountResponse) throws IOException {
-    	return mapper.readValue($accountResponse, SiftMerchantResponse.class);
+	private static SiftMerchantResponse deserializeMerchantResponse(final String accountResponse) throws IOException  {
+    	try {
+			return mapper.readValue(accountResponse, SiftMerchantResponse.class);
+		} catch (JsonParseException e) {
+			throw new IOException("response error: " + accountResponse, e);
+		} catch (JsonMappingException e) {
+			throw new IOException("response error: " + accountResponse, e);
+		} 
     }
 
 }

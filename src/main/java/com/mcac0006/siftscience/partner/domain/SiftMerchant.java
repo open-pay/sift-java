@@ -9,6 +9,8 @@
  */
 package com.mcac0006.siftscience.partner.domain;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,12 +32,16 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(LowerCaseWithUnderscoresStrategy.class)
 public class SiftMerchant {
     
+	@JsonProperty(value="site_url")
     private String siteUrl;
 
+	@JsonProperty(value="site_email")
     private String siteEmail;
 
+	@JsonProperty(value="analyst_email")
     private String analystEmail;
 
+	@JsonProperty(value="password")
     private String password;
 
 }
