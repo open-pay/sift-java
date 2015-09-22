@@ -7,7 +7,7 @@ import com.mcac0006.siftscience.types.deserializer.PaymentGatewayDeserializer;
 
 /**
  * The payment processor used for this payment.
- * 
+ *
  * @author <a href="mailto:matthew.cachia@gmail.com">Matthew Cachia</a>
  *
  */
@@ -20,26 +20,28 @@ public enum PaymentGateway {
 		AUTHORIZENET("$authorizenet"),
 		BALANCED("$balanced"),
 		EWAY("$eway"),
-		ADYEN("$adyen");
-		
+		ADYEN("$adyen"),
+		OPENPAY("$openpaymx");
+
 		private String siftScienceValue;
 
-		private PaymentGateway(String siftScienceValue) {
+		private PaymentGateway(final String siftScienceValue) {
 			this.siftScienceValue = siftScienceValue;
 		}
-		
+
 		@JsonValue
 		public String getSiftScienceValue() {
-			return siftScienceValue;
+			return this.siftScienceValue;
 		}
-		
+
 		public static PaymentGateway resolve(final String siftScienceValue) {
-			
+
 			for (PaymentGateway ele : PaymentGateway.values()) {
-				if (ele.getSiftScienceValue().equals(siftScienceValue))
-					return ele;
+				if (ele.getSiftScienceValue().equals(siftScienceValue)) {
+                    return ele;
+                }
 			}
-			
+
 			throw new IllegalArgumentException(String.format("Payment Gateway [%s] is not supported by this enum.", siftScienceValue));
 		}
 	}
