@@ -43,7 +43,7 @@ public class SiftScienceHelper {
 	private static String PATH_SCORE_API = "https://api.siftscience.com/v203/score/";
 	private static String PATH_LABELS_API = "https://api.siftscience.com/v203/users/";
 	private static String PATH_PARTNERS_API = "https://api3.siftscience.com/v3/partners/";	
-	private static String PATH_DEVICE_FINGERPRINTING_API = "";
+	private static String PATH_DEVICE_FINGERPRINTING_API = "https://api3.siftscience.com/v3/accounts/";
 	
 	static {
 		mapper = new ObjectMapper();
@@ -134,6 +134,25 @@ public class SiftScienceHelper {
 			
 			return get.readEntity(String.class);
 			
+	}
+	
+	/**
+	 * Sends a getSession request to Sift Science.
+	 * 
+	 * @param accountId - the sift account in question
+	 * @param apikey - the api key to denote which Sift Science account to use.
+	 * @param sessionId - the sessionId of your server session.
+
+	 * @return the Sift Science response with the device info of the session.
+	 */
+	public static String getSession( final String accountId, final String apikey, String sessionId ){
+		
+		final Client client = ClientBuilder.newClient().register(new Authenticator(apikey,""));
+		final WebTarget target = client.target(PATH_DEVICE_FINGERPRINTING_API).path(accountId).path("/sessions").path(sessionId);
+		final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+		final Response get = request.get();
+		
+		return get.readEntity(String.class);
 	}
 
 	/**
