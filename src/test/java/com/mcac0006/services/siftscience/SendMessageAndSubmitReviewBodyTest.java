@@ -1,6 +1,7 @@
 package com.mcac0006.services.siftscience;
 
 import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,37 +22,38 @@ public class SendMessageAndSubmitReviewBodyTest {
 
 	/**
 	 * Asserts that the keys in the given jsonObject are there and no extra/missing keys are found.
-	 * 
-	 * @param jsonObject - the list of 
+	 *
+	 * @param jsonObject - the list of
 	 * @param expectedKeys
 	 */
 	private void assertEquals(final Set<String> jsonKeys, final List<String> expectedKeys) {
-		
+
 		Assert.assertEquals("Number of keys different from expected. Expected keys [%s].", expectedKeys.size(), jsonKeys.size());
-		for (final String key: expectedKeys)
-			Assert.assertTrue(String.format("Key [%s] expected.", key), jsonKeys.contains(key));
+		for (final String key: expectedKeys) {
+            Assert.assertTrue(String.format("Key [%s] expected.", key), jsonKeys.contains(key));
+        }
 	}
-	
+
 	@Test
 	@SuppressWarnings("unchecked")
 	public void sendMessageTest() throws JsonGenerationException, JsonMappingException, IOException {
-		
+
 		final SendMessage send_message = new SendMessage();
 		send_message.setApiKey("INSERT_API_KEY_HERE");
 		send_message.setUserId("billy_jones_301").setRecipientUserId("512924123").setSubject("Subject line of the message.").setContent("Text content of message.");
-		
+
 		/*
 		 * Assert.
 		 */
-		
-		final String json = SiftScienceHelper.serialize(send_message); // the json object we will be asserting		
+
+		final String json = SiftScienceHelper.DEFAULT.serialize(send_message); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
-		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read; 
-		
+		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
+
 		// assert first level
 		final List<String> $expectedKeys = Arrays.asList("$type", "$api_key", "$user_id", "$recipient_user_id", "$subject", "$content");
-		assertEquals($.keySet(), $expectedKeys);
-		
+		this.assertEquals($.keySet(), $expectedKeys);
+
 		// then assert the values
 		Assert.assertEquals("INSERT_API_KEY_HERE", $.get("$api_key"));
 		Assert.assertEquals("$send_message", $.get("$type"));
@@ -60,27 +62,27 @@ public class SendMessageAndSubmitReviewBodyTest {
 		Assert.assertEquals("Subject line of the message.", $.get("$subject"));
 		Assert.assertEquals("Text content of message.", $.get("$content"));
 	}
-	
+
 	@Test
 	@SuppressWarnings("unchecked")
 	public void submitReviewTest() throws JsonGenerationException, JsonMappingException, IOException {
-		
+
 		final SubmitReview submit_review = new SubmitReview();
 		submit_review.setApiKey("INSERT_API_KEY_HERE");
 		submit_review.setUserId("billy_jones_301").setContent("Text content of submitted review goes here.").setReviewTitle("Title of Review Goes Here").setItemId("V4C3D5R2Z6").setReviewedUserId("billy_jones_301").setSubmissionStatus(SubmissionStatus.SUCCESS);
-		
+
 		/*
 		 * Assert.
 		 */
-		
-		final String json = SiftScienceHelper.serialize(submit_review); // the json object we will be asserting		
+
+		final String json = SiftScienceHelper.DEFAULT.serialize(submit_review); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
-		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read; 
-		
+		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
+
 		// assert first level
 		final List<String> $expectedKeys = Arrays.asList("$type", "$api_key", "$user_id", "$content", "$review_title", "$item_id", "$reviewed_user_id", "$submission_status");
-		assertEquals($.keySet(), $expectedKeys);
-		
+		this.assertEquals($.keySet(), $expectedKeys);
+
 		// then assert the values
 		Assert.assertEquals("INSERT_API_KEY_HERE", $.get("$api_key"));
 		Assert.assertEquals("$submit_review", $.get("$type"));

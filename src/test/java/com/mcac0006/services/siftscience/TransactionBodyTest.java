@@ -70,7 +70,7 @@ public class TransactionBodyTest {
 		 * Assert.
 		 */
 
-		final String json = SiftScienceHelper.serialize(transaction); // the json object we will be asserting
+		final String json = SiftScienceHelper.DEFAULT.serialize(transaction); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
 		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
 
@@ -157,7 +157,7 @@ public class TransactionBodyTest {
 		 * Assert.
 		 */
 
-		final String json = SiftScienceHelper.serialize(transaction); // the json object we will be asserting
+		final String json = SiftScienceHelper.DEFAULT.serialize(transaction); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
 		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
 
@@ -250,7 +250,7 @@ public class TransactionBodyTest {
 		 * Assert.
 		 */
 
-		final String json = SiftScienceHelper.serialize(transaction); // the json object we will be asserting
+		final String json = SiftScienceHelper.DEFAULT.serialize(transaction); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
 		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
 

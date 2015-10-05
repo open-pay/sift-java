@@ -33,8 +33,6 @@ import com.mcac0006.siftscience.score.domain.SiftScienceScore;
  */
 public class SiftScienceHelper {
 
-    private static ObjectMapper mapper;
-
     private static String PATH_EVENTS_API = "https://api.siftscience.com/v203/events";
 
     private static String PATH_SCORE_API = "https://api.siftscience.com/v203/score/";
@@ -45,12 +43,13 @@ public class SiftScienceHelper {
 
     private static String PATH_DEVICE_FINGERPRINTING_API = "https://api3.siftscience.com/v3/accounts/";
 
-    static {
-        mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Inclusion.NON_NULL);
-    }
+    public static SiftScienceHelper DEFAULT = new SiftScienceHelper();
 
-    private SiftScienceHelper() {
+    private ObjectMapper mapper;
+
+    public SiftScienceHelper() {
+        this.mapper = new ObjectMapper();
+        this.mapper.setSerializationInclusion(Inclusion.NON_NULL);
     }
 
     /**
@@ -58,14 +57,14 @@ public class SiftScienceHelper {
      * @param event - the content regarding the user (or session) in question.
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
-    public static SiftScienceResponse send(final Event event) {
+    public SiftScienceResponse send(final Event event) {
         final Client client = ClientBuilder.newClient();
         try {
             final WebTarget target = client.target(PATH_EVENTS_API);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-            final Response post = request.post(Entity.entity(serialize(event), MediaType.APPLICATION_JSON_TYPE));
+            final Response post = request.post(Entity.entity(this.serialize(event), MediaType.APPLICATION_JSON_TYPE));
 
-            final SiftScienceResponse siftResult = deserializeResponse(post.readEntity(String.class));
+            final SiftScienceResponse siftResult = this.deserializeResponse(post.readEntity(String.class));
             return siftResult;
 
         } catch (IOException e) {
@@ -81,14 +80,14 @@ public class SiftScienceHelper {
      * @param label - the content regarding the user in question.
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
-    public static SiftScienceResponse send(final String userId, final Label label) {
+    public SiftScienceResponse send(final String userId, final Label label) {
         final Client client = ClientBuilder.newClient();
         try {
             final WebTarget target = client.target(PATH_LABELS_API).path(userId).path("labels");
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-            final Response post = request.post(Entity.entity(serialize(label), MediaType.APPLICATION_JSON_TYPE));
+            final Response post = request.post(Entity.entity(this.serialize(label), MediaType.APPLICATION_JSON_TYPE));
 
-            final SiftScienceResponse siftResult = deserializeResponse(post.readEntity(String.class));
+            final SiftScienceResponse siftResult = this.deserializeResponse(post.readEntity(String.class));
             return siftResult;
 
         } catch (IOException e) {
@@ -105,16 +104,16 @@ public class SiftScienceHelper {
      * @param merchantAccount - the entity of Sift Science merchant account to create.
      * @return the Sift Science response with the account created.
      */
-    public static SiftMerchantResponse createAccount(final String partnerId, final String apikey,
+    public SiftMerchantResponse createAccount(final String partnerId, final String apikey,
             final SiftMerchant merchantAccount) {
         final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
-            final Response post = request.post(Entity.entity(serialize(merchantAccount),
+            final Response post = request.post(Entity.entity(this.serialize(merchantAccount),
                     MediaType.APPLICATION_JSON_TYPE));
 
-            final SiftMerchantResponse siftMerchantResult = deserializeMerchantResponse(post.readEntity(String.class));
+            final SiftMerchantResponse siftMerchantResult = this.deserializeMerchantResponse(post.readEntity(String.class));
             return siftMerchantResult;
 
         } catch (IOException e) {
@@ -124,7 +123,7 @@ public class SiftScienceHelper {
         }
     }
 
-    public static String listAccounts(final String partnerId, final String apikey) {
+    public String listAccounts(final String partnerId, final String apikey) {
         final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
@@ -143,7 +142,7 @@ public class SiftScienceHelper {
      * @param sessionId - the sessionId of your server session.
      * @return the Sift Science response with the device info of the session.
      */
-    public static String getSession(final String accountId, final String apikey, final String sessionId) {
+    public String getSession(final String accountId, final String apikey, final String sessionId) {
         final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_DEVICE_FINGERPRINTING_API).path(accountId).path("/sessions")
@@ -164,13 +163,13 @@ public class SiftScienceHelper {
      * @return a Sift Science score wrapped in a {@link SiftScienceScore} instance containing information such as the
      *         fraud score and the reason. Refer to the class' JavaDocs for more information.
      */
-    public static SiftScienceScore getScore(final String api_key, final String userId) {
+    public SiftScienceScore getScore(final String api_key, final String userId) {
         final Client client = ClientBuilder.newClient();
         try {
             final WebTarget target = client.target(PATH_SCORE_API).path(userId).queryParam("api_key", api_key);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
             final Response get = request.get();
-            final SiftScienceScore score = deserializeScore(get.readEntity(String.class));
+            final SiftScienceScore score = this.deserializeScore(get.readEntity(String.class));
             return score;
         } catch (IOException e) {
             throw new RuntimeException("Error generating JSON content to retrieve score request.", e);
@@ -193,17 +192,17 @@ public class SiftScienceHelper {
      * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during serialization
      *         of the event.
      */
-    public static String serialize(final Event event) throws IOException {
-        return mapper.writeValueAsString(event);
+    public String serialize(final Event event) throws IOException {
+        return this.mapper.writeValueAsString(event);
     }
 
-    public static String serialize(final Label label) throws IOException {
-        return mapper.writeValueAsString(label);
+    public String serialize(final Label label) throws IOException {
+        return this.mapper.writeValueAsString(label);
     }
 
-    private static String serialize(final SiftMerchant merchantAccount) throws IOException {
-        System.out.println("serialization:" + mapper.writeValueAsString(merchantAccount));
-        return mapper.writeValueAsString(merchantAccount);
+    private String serialize(final SiftMerchant merchantAccount) throws IOException {
+        System.out.println("serialization:" + this.mapper.writeValueAsString(merchantAccount));
+        return this.mapper.writeValueAsString(merchantAccount);
     }
 
     /**
@@ -214,8 +213,8 @@ public class SiftScienceHelper {
      * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during deserialization
      *         of the event or label.
      */
-    public static SiftScienceResponse deserializeResponse(final String $response) throws IOException {
-        return mapper.readValue($response, SiftScienceResponse.class);
+    public SiftScienceResponse deserializeResponse(final String $response) throws IOException {
+        return this.mapper.readValue($response, SiftScienceResponse.class);
     }
 
     /**
@@ -231,8 +230,8 @@ public class SiftScienceHelper {
      * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during deserialization
      *         of the score.
      */
-    public static SiftScienceScore deserializeScore(final String $scoreResponse) throws IOException {
-        return mapper.readValue($scoreResponse, SiftScienceScore.class);
+    public SiftScienceScore deserializeScore(final String $scoreResponse) throws IOException {
+        return this.mapper.readValue($scoreResponse, SiftScienceScore.class);
     }
 
     /**
@@ -244,9 +243,9 @@ public class SiftScienceHelper {
      * @throws IOException thrown whenever an error (unexpected or user-inflicted) has been found during deserialization
      *         of the account returned.
      */
-    private static SiftMerchantResponse deserializeMerchantResponse(final String accountResponse) throws IOException {
+    private SiftMerchantResponse deserializeMerchantResponse(final String accountResponse) throws IOException {
         try {
-            return mapper.readValue(accountResponse, SiftMerchantResponse.class);
+            return this.mapper.readValue(accountResponse, SiftMerchantResponse.class);
         } catch (JsonParseException e) {
             throw new IOException("response error: " + accountResponse, e);
         } catch (JsonMappingException e) {

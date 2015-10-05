@@ -52,7 +52,7 @@ public class LabelBodyTest {
 		 * Assert.
 		 */
 
-		final String json = SiftScienceHelper.serialize(label); // the json object we will be asserting
+		final String json = SiftScienceHelper.DEFAULT.serialize(label); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
 		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
 
@@ -89,7 +89,7 @@ public class LabelBodyTest {
 		 * Assert.
 		 */
 
-		final String json = SiftScienceHelper.serialize(label); // the json object we will be asserting
+		final String json = SiftScienceHelper.DEFAULT.serialize(label); // the json object we will be asserting
 		final Object read = JsonPath.read(json, "$");
 		final LinkedHashMap<String, Object> $ =(LinkedHashMap<String, Object>)read;
 

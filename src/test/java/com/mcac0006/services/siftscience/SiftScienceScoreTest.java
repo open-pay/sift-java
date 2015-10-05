@@ -69,7 +69,7 @@ public class SiftScienceScoreTest {
 
 		// let's load up the score sample file
 		final InputStream inputStream = new FileInputStream("target/test-classes/score/$sift_score_sample.json");
-		final SiftScienceScore scoreFromSS = SiftScienceHelper.deserializeScore(IOUtils.toString(inputStream));
+		final SiftScienceScore scoreFromSS = SiftScienceHelper.DEFAULT.deserializeScore(IOUtils.toString(inputStream));
 
 
 		final SiftScienceScore scoreToAssertAgainst = new SiftScienceScore();
@@ -107,7 +107,7 @@ public class SiftScienceScoreTest {
 
 		// let's load up the score sample file
 		final InputStream inputStream = new FileInputStream("target/test-classes/score/$sift_score_sample_2.json");
-		final SiftScienceScore scoreFromSS = SiftScienceHelper.deserializeScore(IOUtils.toString(inputStream));
+		final SiftScienceScore scoreFromSS = SiftScienceHelper.DEFAULT.deserializeScore(IOUtils.toString(inputStream));
 
 
 		final SiftScienceScore scoreToAssertAgainst = new SiftScienceScore();
@@ -211,7 +211,7 @@ public class SiftScienceScoreTest {
 
 		// let's load up the score sample file
 		final InputStream inputStream = new FileInputStream("target/test-classes/score/$sift_score_unknown_user_sample.json");
-		final SiftScienceScore scoreFromSS = SiftScienceHelper.deserializeScore(IOUtils.toString(inputStream));
+		final SiftScienceScore scoreFromSS = SiftScienceHelper.DEFAULT.deserializeScore(IOUtils.toString(inputStream));
 
 		final SiftScienceScore scoreToAssertAgainst = new SiftScienceScore();
 		scoreToAssertAgainst.setStatus((short)54);
