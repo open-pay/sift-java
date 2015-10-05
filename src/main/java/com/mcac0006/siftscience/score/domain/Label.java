@@ -4,7 +4,6 @@
 package com.mcac0006.siftscience.score.domain;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -89,11 +88,11 @@ public class Label {
 		return this;
 	}
 
-	public Calendar getTime() {
+	public Date getTime() {
 		return this.time;
 	}
 
-	public void setTime(final Calendar time) {
+	public void setTime(final Date time) {
 		this.time = time;
 	}
 

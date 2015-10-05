@@ -3,7 +3,6 @@
  */
 package com.mcac0006.siftscience.event.domain;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,11 +108,11 @@ public abstract class Event {
 		this.customFields.put(key, value);
 	}
 
-	public Calendar getTime() {
+	public Date getTime() {
 		return this.time;
 	}
 
-	public void setTime(final Calendar time) {
+	public void setTime(final Date time) {
 		this.time = time;
 	}
 
