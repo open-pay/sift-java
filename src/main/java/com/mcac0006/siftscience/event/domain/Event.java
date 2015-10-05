@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mcac0006.siftscience.event.domain;
 
@@ -30,40 +30,40 @@ public abstract class Event {
 	 */
 	@JsonProperty(value="$type")
 	private String eventType;
-	
+
 	/**
 	 * Your Sift Science API key
 	 */
 	@JsonProperty(value="$api_key")
 	private String apiKey;
-	
+
 	/**
-	 * Include this field in your API requests when sending historical events. 
+	 * Include this field in your API requests when sending historical events.
 	 * The value is the date and time of the historical time that the action took place.
-	 * 
-	 * Refer to Sift Science's 
-	 * <a href="https://siftscience.com/docs/tutorials/sending-historical-data/">Sending Historical Data</a> 
+	 *
+	 * Refer to Sift Science's
+	 * <a href="https://siftscience.com/docs/tutorials/sending-historical-data/">Sending Historical Data</a>
 	 * for more information.
 	 */
 	@JsonProperty(value="$time")
 	@JsonSerialize(using=DateSerializer.class, include=Inclusion.NON_EMPTY)
 	@JsonDeserialize(using=DateDeserializer.class)
-	private Calendar time;
-	
+	private Date time;
+
 	/**
-	 * Sift Science also supports additional information which might be analyzed and 
+	 * Sift Science also supports additional information which might be analyzed and
 	 * further improve the accuracy for fraud.
-	 * 
+	 *
 	 * <br /><br />
-	 * 
-	 * <strong>Note: The $ prefix is reserved for supported fields in the Events API. 
+	 *
+	 * <strong>Note: The $ prefix is reserved for supported fields in the Events API.
 	 * Custom field names may only contain alphanumeric characters and _.</strong>
-	 * 
+	 *
 	 * <br /><br />
-	 * 
-	 * It is important to name the field properly so that Sift Science can perform the relevant 
+	 *
+	 * It is important to name the field properly so that Sift Science can perform the relevant
 	 * analysis on them.
-	 * 
+	 *
 	 * <ul>
 	 * <li><strong>Email</strong> fields should always end with <code>_email</code>. For example: <code>referrer_email</code>, <code>seller_email</code>.</li>
 	 * <li><strong>Phone</strong> fields should always end with <code>_phone</code>. For example: <code>secondary_phone</code>, <code>work_phone</code>.</li>
@@ -72,60 +72,60 @@ public abstract class Event {
 	 * <li><strong>User ID</strong> fields should always end with <code>_user_id</code>. For example: <code>friend_user_id</code>, <code>buyer_user_id</code>.</li>
 	 * <li><strong>Status</strong> fields should always end with <code>_status</code>. For example: <code>request_status</code>, <code>rma_status</code>.</li>
 	 * </ul>
-	 * 
+	 *
 	 */
 	private Map<String, Object> customFields = new HashMap<String, Object>();
-	
-	
+
+
 	protected Event(final String eventType) {
 		super();
 		this.eventType = eventType;
 	}
-	
-	protected Event(String eventType, String apiKey) {
+
+	protected Event(final String eventType, final String apiKey) {
 		this(eventType);
 		this.apiKey = apiKey;
 	}
 
 	public String getApiKey() {
-		return apiKey;
+		return this.apiKey;
 	}
 
-	public void setApiKey(String apiKey) {
+	public void setApiKey(final String apiKey) {
 		this.apiKey = apiKey;
 	}
 
 	public final String getEventType() {
-		return eventType;
+		return this.eventType;
 	}
 
 	@JsonAnyGetter
 	public final Map<String, Object> getCustomFields() {
-		return customFields;
+		return this.customFields;
 	}
-	
+
 	@JsonAnySetter
 	public final void addCustomField(final String key, final Object value) {
-		customFields.put(key, value);
+		this.customFields.put(key, value);
 	}
 
 	public Calendar getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(Calendar time) {
+	public void setTime(final Calendar time) {
 		this.time = time;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 
 		if (obj == null || !(obj instanceof Event)) {
 			return false;
 		}
-		
+
 		final Event e = (Event)obj;
-		
+
 		if (this.apiKey == null) {
 			if (e.getApiKey() != null) {
 				return false;
@@ -133,7 +133,7 @@ public abstract class Event {
 		} else if (!this.apiKey.equals(e.getApiKey())) {
 			return false;
 		}
-		
+
 		if (this.eventType == null) {
 			if (e.getEventType() != null) {
 				return false;
@@ -141,7 +141,7 @@ public abstract class Event {
 		} else if (!this.eventType.equals(e.getEventType())) {
 			return false;
 		}
-		
+
 		if (this.customFields == null) {
 			if (e.getCustomFields() != null) {
 				return false;
@@ -149,7 +149,7 @@ public abstract class Event {
 		} else if (!this.customFields.equals(e.getCustomFields())) {
 			return false;
 		}
-		
+
 		if (this.time == null) {
 			if (e.getTime() != null) {
 				return false;
@@ -157,7 +157,7 @@ public abstract class Event {
 		} else if (!this.time.equals(e.getTime())) {
 			return false;
 		}
-		
+
 		return true;
 	}
 }

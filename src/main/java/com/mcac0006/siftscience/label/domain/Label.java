@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.mcac0006.siftscience.label.domain;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
@@ -16,109 +17,109 @@ import com.mcac0006.siftscience.types.deserializer.DateDeserializer;
 import com.mcac0006.siftscience.types.serializer.DateSerializer;
 
 /**
- * Use the Labels to identify bad users for Sift Science's machine learning system. 
- * Labels allows you to label and categorize bad behavior, as well as mark false positives 
- * programmatically. Our system automatically analyzes these examples and learns to identify 
+ * Use the Labels to identify bad users for Sift Science's machine learning system.
+ * Labels allows you to label and categorize bad behavior, as well as mark false positives
+ * programmatically. Our system automatically analyzes these examples and learns to identify
  * bad behavior more accurately.
- * 
+ *
  * @author <a href="mailto:matthew.cachia@gmail.com">Matthew Cachia</a>
  *
  */
 public class Label {
-	
+
 	/**
 	 * Your Sift Science API key
 	 */
 	@JsonProperty(value="$api_key")
 	private String apiKey;
-	
+
 	/**
-	 * Indicate whether this user is fraudulent, or otherwise engaging in activities that are negative for your business. 
-	 * 
+	 * Indicate whether this user is fraudulent, or otherwise engaging in activities that are negative for your business.
+	 *
 	 * Set to {@link Boolean#TRUE} when you can confirm negative activity, e.g. a chargeback, or spam coming from the user.
-	 * 
+	 *
 	 * Set to {@link Boolean#FALSE} when Sift gave this user a high score, but you can confirm that they are a legitimate user.
 	 */
 	@JsonProperty("$is_bad")
 	private Boolean isBad;
-	
+
 	/**
 	 * A list of one or more reasons indicating why this particular user has been labeled "bad".
 	 */
 	@JsonProperty("$reasons")
 	private Reason[] reasons;
-	
+
 	/**
 	 * Freeform text description of the user and/or incident triggering the label for your internal record-keeping.
 	 */
 	@JsonProperty("$description")
 	private String description;
-	
+
 	/**
-	 * Include this field in your API requests when sending historical events. 
+	 * Include this field in your API requests when sending historical events.
 	 * The value is the date and time of the historical time that the action took place.
-	 * 
-	 * Refer to Sift Science's 
-	 * <a href="https://siftscience.com/docs/tutorials/sending-historical-data/">Sending Historical Data</a> 
+	 *
+	 * Refer to Sift Science's
+	 * <a href="https://siftscience.com/docs/tutorials/sending-historical-data/">Sending Historical Data</a>
 	 * for more information.
 	 */
 	@JsonProperty(value="$time")
 	@JsonSerialize(using=DateSerializer.class, include=Inclusion.NON_EMPTY)
 	@JsonDeserialize(using=DateDeserializer.class)
-	private Calendar time;
+	private Date time;
 
-	public void setApiKey(String apiKey) {
+	public void setApiKey(final String apiKey) {
 		this.apiKey = apiKey;
 	}
-	
+
 	public String getApiKey() {
-		return apiKey;
+		return this.apiKey;
 	}
 
 	public Boolean getIsBad() {
-		return isBad;
+		return this.isBad;
 	}
 
 	public Reason[] getReasons() {
-		return reasons;
+		return this.reasons;
 	}
 
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
-	public Label setIsBad(Boolean isBad) {
+	public Label setIsBad(final Boolean isBad) {
 		this.isBad = isBad;
 		return this;
 	}
 
-	public Label setReasons(Reason[] reasons) {
+	public Label setReasons(final Reason[] reasons) {
 		this.reasons = reasons;
 		return this;
 	}
 
-	public Label setDescription(String description) {
+	public Label setDescription(final String description) {
 		this.description = description;
 		return this;
 	}
-	
+
 	public Calendar getTime() {
-		return time;
+		return this.time;
 	}
 
-	public void setTime(Calendar time) {
+	public void setTime(final Calendar time) {
 		this.time = time;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 
 		if (obj == null || !(obj instanceof Label)) {
 			return false;
 		}
-		
+
 		final Label l = (Label)obj;
-		
+
 		if (this.isBad == null) {
 			if (l.getIsBad() != null) {
 				return false;
@@ -126,7 +127,7 @@ public class Label {
 		} else if (!this.isBad.equals(l.getIsBad())) {
 			return false;
 		}
-		
+
 		if (this.apiKey == null) {
 			if (l.getApiKey() != null) {
 				return false;
@@ -134,7 +135,7 @@ public class Label {
 		} else if (!this.apiKey.equals(l.getApiKey())) {
 			return false;
 		}
-		
+
 		if (this.description == null) {
 			if (l.getDescription() != null) {
 				return false;
@@ -142,7 +143,7 @@ public class Label {
 		} else if (!this.description.equals(l.getDescription())) {
 			return false;
 		}
-		
+
 		if (this.reasons == null) {
 			if (l.getReasons() != null) {
 				return false;
@@ -150,7 +151,7 @@ public class Label {
 		} else if (!Arrays.equals(this.reasons, l.getReasons())) {
 			return false;
 		}
-		
+
 		if (this.time == null) {
 			if (l.getTime() != null) {
 				return false;
@@ -158,7 +159,7 @@ public class Label {
 		} else if (!this.time.equals(l.getTime())) {
 			return false;
 		}
-		
+
 		return true;
 	}
 }
