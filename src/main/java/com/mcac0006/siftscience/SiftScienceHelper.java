@@ -98,6 +98,24 @@ public class SiftScienceHelper {
     }
 
     /**
+     * Sends a Label ($label) to Sift Science.
+     * @param userId - the user in question
+     * @param label - the content regarding the user in question.
+     * @return the Sift Science response which denotes whether the request has been processed successfully or not.
+     */
+    public boolean deleteLabel(final String userId, final String apiKey) {
+        final Client client = ClientBuilder.newClient();
+        try {
+            final WebTarget target = client.target(PATH_LABELS_API).path(userId).path("labels").queryParam("api_key", apiKey);
+            final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
+            final Response delete = request.delete();
+            return delete.getStatus() == 204;
+        } finally {
+            client.close();
+        }
+    }
+
+    /**
      * Sends a create account request ($accounts) to Sift Science.
      * @param partnerId - the partner in question
      * @param apikey - the api key to denote which Sift Science account to use.
