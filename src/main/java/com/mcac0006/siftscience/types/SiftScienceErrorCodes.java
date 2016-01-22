@@ -23,7 +23,8 @@ public enum SiftScienceErrorCodes {
     INVALID_HTTP_BODY(57),
     RATE_LIMITED(60),
     INVALID_API_VERSION(104),
-    NOT_VALID_RESERVED_FIELD(105);
+    NOT_VALID_RESERVED_FIELD(105),
+    SYNCHRONOUS_ACTION_TIMEOUT(-3);
 
     private int errorCode;
 
