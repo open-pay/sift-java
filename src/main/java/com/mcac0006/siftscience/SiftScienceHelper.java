@@ -4,6 +4,8 @@
 package com.mcac0006.siftscience;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -58,19 +60,45 @@ public class SiftScienceHelper {
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
     public SiftScienceResponse send(final Event event) {
+        return this.send(event, null);
+    }
+
+    /**
+     * Sends an event ($transaction, $create_account, etc ...) to Sift Science.
+     * @param event - the content regarding the user (or session) in question.
+     * @param urlParams - map with parameters to add to the URL.
+     * @return the Sift Science response which denotes whether the request has been processed successfully or not.
+     */
+    public SiftScienceResponse send(final Event event, Map<String, String> urlParams) {
         final Client client = ClientBuilder.newClient();
         try {
-            final WebTarget target = client.target(PATH_EVENTS_API);
+            String path = buildSendPath(urlParams);
+            final WebTarget target = client.target(path);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
             final Response post = request.post(Entity.entity(this.serialize(event), MediaType.APPLICATION_JSON_TYPE));
-
-            final SiftScienceResponse siftResult = this.deserializeResponse(post.readEntity(String.class));
+            String content = post.readEntity(String.class);
+            System.out.println(content);
+            final SiftScienceResponse siftResult = this.deserializeResponse(content);
             return siftResult;
 
         } catch (IOException e) {
             throw new SiftScienceException("Error generating JSON content to send event.", e);
         } finally {
             client.close();
+        }
+    }
+
+    private String buildSendPath(Map<String, String> urlParams) {
+        if (urlParams == null || urlParams.isEmpty()) {
+            return PATH_EVENTS_API;
+        } else {
+            StringBuilder path = new StringBuilder();
+            path.append(PATH_EVENTS_API).append("?");
+            for (Entry<String, String> entry : urlParams.entrySet()) {
+                path.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            }
+            path.setLength(path.length() - 1);
+            return path.toString();
         }
     }
 
