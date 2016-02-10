@@ -43,4 +43,9 @@ public class SiftMerchantResponse {
 	@JsonProperty(value="sandbox")
     private Access sandbox;
 
+	@JsonProperty(value="error")
+	private String error;
+
+	@JsonProperty(value="description")
+	private String description;
 }
