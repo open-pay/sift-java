@@ -19,6 +19,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.glassfish.jersey.client.ClientProperties;
 
 import com.mcac0006.siftscience.event.domain.Event;
 import com.mcac0006.siftscience.exception.SiftScienceException;
@@ -44,6 +45,8 @@ public class SiftScienceHelper {
     private static String PATH_PARTNERS_API = "https://api3.siftscience.com/v3/partners/";
 
     private static String PATH_DEVICE_FINGERPRINTING_API = "https://api3.siftscience.com/v3/accounts/";
+    
+    private static Integer TIME_OUT  = 5000;
 
     public static SiftScienceHelper DEFAULT = new SiftScienceHelper();
 
@@ -70,14 +73,13 @@ public class SiftScienceHelper {
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
     public SiftScienceResponse send(final Event event, Map<String, String> urlParams) {
-        final Client client = ClientBuilder.newClient();
+        final Client client = createNewClient();
         try {
             String path = buildSendPath(urlParams);
             final WebTarget target = client.target(path);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
             final Response post = request.post(Entity.entity(this.serialize(event), MediaType.APPLICATION_JSON_TYPE));
             String content = post.readEntity(String.class);
-            System.out.println(content);
             final SiftScienceResponse siftResult = this.deserializeResponse(content);
             return siftResult;
 
@@ -109,7 +111,7 @@ public class SiftScienceHelper {
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
     public SiftScienceResponse send(final String userId, final Label label) {
-        final Client client = ClientBuilder.newClient();
+        final Client client = createNewClient();
         try {
             final WebTarget target = client.target(PATH_LABELS_API).path(userId).path("labels");
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
@@ -132,7 +134,7 @@ public class SiftScienceHelper {
      * @return the Sift Science response which denotes whether the request has been processed successfully or not.
      */
     public boolean deleteLabel(final String userId, final String apiKey) {
-        final Client client = ClientBuilder.newClient();
+        final Client client = createNewClient();
         try {
             final WebTarget target = client.target(PATH_LABELS_API).path(userId).path("labels").queryParam("api_key", apiKey);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
@@ -144,6 +146,16 @@ public class SiftScienceHelper {
     }
 
     /**
+     * @return
+     */
+    private Client createNewClient() {
+        final Client client = ClientBuilder.newClient();
+        client.property(ClientProperties.CONNECT_TIMEOUT, TIME_OUT);
+        client.property(ClientProperties.READ_TIMEOUT, TIME_OUT);
+        return client;
+    }
+
+    /**
      * Sends a create account request ($accounts) to Sift Science.
      * @param partnerId - the partner in question
      * @param apikey - the api key to denote which Sift Science account to use.
@@ -152,7 +164,7 @@ public class SiftScienceHelper {
      */
     public SiftMerchantResponse createAccount(final String partnerId, final String apikey,
             final SiftMerchant merchantAccount) {
-        final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
+        final Client client = createNewClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
@@ -170,7 +182,7 @@ public class SiftScienceHelper {
     }
 
     public String listAccounts(final String partnerId, final String apikey) {
-        final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
+        final Client client = createNewClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_PARTNERS_API).path(partnerId).path("/accounts");
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
@@ -189,7 +201,7 @@ public class SiftScienceHelper {
      * @return the Sift Science response with the device info of the session.
      */
     public String getSession(final String accountId, final String apikey, final String sessionId) {
-        final Client client = ClientBuilder.newClient().register(new Authenticator(apikey, ""));
+        final Client client = createNewClient().register(new Authenticator(apikey, ""));
         try {
             final WebTarget target = client.target(PATH_DEVICE_FINGERPRINTING_API).path(accountId).path("/sessions")
                     .path(sessionId);
@@ -210,7 +222,7 @@ public class SiftScienceHelper {
      *         fraud score and the reason. Refer to the class' JavaDocs for more information.
      */
     public SiftScienceScore getScore(final String api_key, final String userId) {
-        final Client client = ClientBuilder.newClient();
+        final Client client = createNewClient();
         try {
             final WebTarget target = client.target(PATH_SCORE_API).path(userId).queryParam("api_key", api_key);
             final Builder request = target.request(MediaType.APPLICATION_JSON_TYPE);
@@ -247,7 +259,6 @@ public class SiftScienceHelper {
     }
 
     private String serialize(final SiftMerchant merchantAccount) throws IOException {
-        System.out.println("serialization:" + this.mapper.writeValueAsString(merchantAccount));
         return this.mapper.writeValueAsString(merchantAccount);
     }
 
