@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
+@org.codehaus.jackson.annotate.JsonIgnoreProperties(ignoreUnknown = true)
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE, isGetterVisibility = Visibility.NONE)
 @JsonNaming(LowerCaseWithUnderscoresStrategy.class)
 public class SiftMerchantResponse {
